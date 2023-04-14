@@ -24,3 +24,52 @@ You can also find us on #buildroot on OFTC IRC.
 
 If you would like to contribute patches, please read
 https://buildroot.org/manual.html#submitting-patches
+
+device write-> networkdevice support -> Ethernet  driver support -> PRO/1000 *
+colormake -j16 #run afeter changes on menu-config
+
+
+
+#Enter qemu
+qemu-system-i386 --kernel output/images/bzImage --hda output/images/rootfs.ext2 --nographic --append "console=ttyS0 root=/dev/sda" 
+
+#qemu-ifup run
+sudo qemu-system-i386 --device e1000,netdev=eth0,mac=aa:bb:cc:dd:ee:ff \
+	--netdev tap,id=eth0,script=custom-scripts/qemu-ifup \
+	--kernel output/images/bzImage \
+	--hda output/images/rootfs.ext2 \
+	--nographic \
+	--append "console=ttyS0 root=/dev/sda"
+
+links http://192.168.1.10:8080/
+#host: 172.16.5.4
+#client: 192.168.1.10
+
+#copy \/
+#target start
+#Configure um IP para a interface de rede do guest:
+ifconfig eth0 192.168.1.10 up &&
+
+#Agora, adicione uma rota padrão para o IP do host.
+route add -host 172.16.5.4 dev eth0 &&
+route add default gw 172.16.5.4 &&
+
+iperf -s
+#target fi
+
+#run on host
+#on src/app
+./iperf-2.1.8/src/iperf -c 192.168.1.10 -i 1 -t 5 
+
+#with jitter
+iperf -s -u
+./iperf-2.1.8/src/iperf -c 192.168.1.10 -i 1 -t 5 -u
+
+#/workspaces/labsisop-buildroot/output/host/usr/bin/
+export PATH=$PATH:/workspaces/labsisop-buildroot/output/host/usr/bin/
+/workspaces/labsisop-buildroot/output/host/usr/bin/
+ln -s /workspaces/labsisop-buildroot/output/host/usr/bin/i686-linux-gcc output/target/usr/bin/i686-linux-gcc
+
+#i686-linux-gcc hello.c -O2 -o hello
+
+links http://192.168.1.10:8080/
